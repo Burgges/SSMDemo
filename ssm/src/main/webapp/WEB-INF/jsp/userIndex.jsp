@@ -40,8 +40,10 @@
 <div class="page-body col-xs-10" id="main-body" style="width:100%; height: 600px; margin-top: 50px;">
     <ul style="line-height: 36px;list-style: none;border-bottom: 1px solid #eee; width: 80%; margin: 4px auto;">
         <li>
-            <input style="margin-bottom: 20px" id="searchContent">
-            <button style="margin-left: 20px;margin-bottom: 10px" type="button" class="btn btn-info" id="searchBtn">Search</button>
+            <input style="margin-bottom: 20px; height: 35px; border-radius: 2px; border: 1px #e9e9e9 solid; text-indent: 5px;" id="searchContent">
+            <button style="margin-left: 20px;margin-bottom: 1px" type="button" class="btn btn-info" id="searchBtn">Search</button>
+            <span style="margin-left: 68%; ">${sessionScope.userName}</span>
+            <a style="float: right; color:red;" href="logout"> 注销</a>
         </li>
     </ul>
     <div id="userList" style="margin: 0px auto;"></div>

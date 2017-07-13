@@ -121,6 +121,8 @@ public class UserServiceImpl implements UserService {
             logger.error("CaptchaCode error",new Exception("CaptchaCode error"));
             return "CaptchaCode error";
         }
+        session.setAttribute("userName", user.getUserName());
+        session.setAttribute("UID", user.getUserId());
         return result;
     }
 }

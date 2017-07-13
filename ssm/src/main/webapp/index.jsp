@@ -12,6 +12,6 @@
 </head>
 <body>
 <b>Hello world!</b>
-<a href="index" >User List</a>
+<a href="users/index" >User List</a>
 </body>
 </html>

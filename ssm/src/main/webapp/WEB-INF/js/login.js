@@ -20,7 +20,7 @@ $(document).ready(function() {
                 $("#errorMessage").text("");
                 console.log(response);
                 if (response.message == "userIndex") {
-                    window.location.href = "index";
+                    window.location.href = "users/index";
                 } else {
                     $("#p").val("");
                     $("#c").val("");

@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,8 +63,7 @@ public class UserController {
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.POST)
     @ResponseBody
     public int update(@PathVariable Integer userId,
-                      @RequestParam Map<String, Object> params,
-                      HttpServletRequest request) throws Exception {
+                      @RequestParam Map<String, Object> params) throws Exception {
         logger.info("update: /users/{userId}");
         int result = -1;
         String userName = params.get("userName") == null ? "":params.get("userName").toString();
@@ -109,19 +107,6 @@ public class UserController {
     }
 
     /**
-     * Select user by user id
-     * @param userId search condition of user id
-     * @return return info
-     * @throws Exception error
-     */
-    @RequestMapping(value = "/{userId}/users", method = RequestMethod.GET)
-    @ResponseBody
-    public User findOneById(@PathVariable Integer userId) throws Exception {
-        logger.info("findOneById: /{userId}/users");
-        return userService.findOneById(userId);
-    }
-
-    /**
      * Query all user
      * @param params search condition
      * @return return info
@@ -129,8 +114,11 @@ public class UserController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
-    public List<User> queryList(@RequestParam Map<String, Object> params) throws Exception {
+    public List<User> queryList(@RequestParam Map<String, Object> params,
+                                HttpServletRequest request) throws Exception {
         logger.info("queryList: /users");
+        logger.info("login user:"+ request.getSession().getAttribute("userName"));
+
         List<User> userList = userService.findList(params);
         JsGridResult<User> jsGridResult = new JsGridResult<>();
         jsGridResult.setData(userList);
@@ -142,30 +130,10 @@ public class UserController {
      * Into user index page
      * @return return info
      */
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/index", method = RequestMethod.GET)
     public String toUserIndex() {
-        logger.info("toUserIndex: /index");
+        logger.info("toUserIndex: /users/index");
         return "userIndex";
-    }
-
-    /**
-     * Into add user page
-     * @return return info
-     */
-    @RequestMapping(value = "/addPage", method = RequestMethod.GET)
-    public String toUserAdd() {
-        logger.info("toUserAdd: /addPage");
-        return "userAdd";
-    }
-
-    /**
-     * Into update user page
-     * @return return info
-     */
-    @RequestMapping(value = "/updatePage", method = RequestMethod.GET)
-    public String toUserUpdate() {
-        logger.info("toUserUpdate: /updatePage");
-        return "userUpdate";
     }
 
     /**
@@ -212,6 +180,13 @@ public class UserController {
         }
     }
 
+    /**
+     * user login
+     * @param request request
+     * @param userDto login user
+     * @return return info
+     * @throws Exception error
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public MessageDto login(HttpServletRequest request, UserDto userDto) throws Exception {
@@ -225,6 +200,56 @@ public class UserController {
         messageDto.setCode(code);
         messageDto.setMessage(result);
         return messageDto;
+    }
+
+    /**
+     * log out
+     * @param request request
+     * @return result
+     * @throws Exception error
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        if(session.getAttribute("userName") == null || "".equals(session.getAttribute("userName"))){
+            return "login";
+        }
+        session.removeAttribute("userName");
+        session.removeAttribute("UID");
+        return "login";
+    }
+
+    /**
+     * Into add user page
+     * @return return info
+     */
+    @RequestMapping(value = "/addPage", method = RequestMethod.GET)
+    public String toUserAdd() {
+        logger.info("toUserAdd: /addPage");
+        return "userAdd";
+    }
+
+    /**
+     * Into update user page
+     * @return return info
+     */
+    @RequestMapping(value = "/updatePage", method = RequestMethod.GET)
+    public String toUserUpdate() {
+        logger.info("toUserUpdate: /updatePage");
+        return "userUpdate";
+    }
+
+    /**
+     * Select user by user id
+     * @param userId search condition of user id
+     * @return return info
+     * @throws Exception error
+     */
+    @RequestMapping(value = "/{userId}/users", method = RequestMethod.GET)
+    @ResponseBody
+    public User findOneById(@PathVariable Integer userId) throws Exception {
+        logger.info("findOneById: /{userId}/users");
+        return userService.findOneById(userId);
     }
 
 }
