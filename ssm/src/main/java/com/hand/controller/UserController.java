@@ -50,6 +50,7 @@ public class UserController {
         if(user.getUserId() == null){
             result = -1;
         }
+
         return result;
     }
 

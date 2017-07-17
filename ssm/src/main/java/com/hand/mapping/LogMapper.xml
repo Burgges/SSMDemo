@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.dao.LogMapper" >
+    <resultMap id="BaseResultMap" type="com.hand.model.Log" >
+        <id column="LOG_ID" property="logId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_API" property="functionApi" jdbcType="VARCHAR" />
+        <result column="LOG_DESCRIPTION" property="logDescription" jdbcType="VARCHAR" />
+        <result column="USER_IP" property="userIp" jdbcType="VARCHAR" />
+        <result column="OPERATION_TIME" property="operationTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapVo" type="com.hand.dto.LogDto" >
+        <result column="LOG_ID" property="logId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="FUNCTION_API" property="functionApi" jdbcType="VARCHAR" />
+        <result column="LOG_DESCRIPTION" property="logDescription" jdbcType="VARCHAR" />
+        <result column="USER_IP" property="userIp" jdbcType="VARCHAR" />
+        <result column="OPERATION_TIME" property="operationTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        LOG_ID,USER_ID,USER_NAME,FUNCTION_API,LOG_DESCRIPTION,USER_IP,OPERATION_TIME
+    </sql>
+
+  <!--  <insert id="save" parameterType="com.hand.model.User">
+        INSERT INTO USER
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                USER_NAME,
+            </if>
+            <if test="password != null" >
+                PASSWORD,
+            </if>
+            <if test="userSex != null" >
+                USER_SEX,
+            </if>
+            <if test="userMail != null" >
+                USER_MAIL,
+            </if>
+            <if test="createdBy != null" >
+                CREATED_BY,
+            </if>
+            <if test="creationDate != null" >
+                CREATION_DATE,
+            </if>
+            <if test="lastUpdatedBy != null" >
+                LAST_UPDATED_BY,
+            </if>
+            <if test="lastUpdateDate != null" >
+                LAST_UPDATE_DATE
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                #{userName, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null" >
+                #{userSex, jdbcType=CHAR},
+            </if>
+            <if test="userMail != null" >
+                #{userMail, jdbcType=VARCHAR},
+            </if>
+            <if test="createdBy != null" >
+                #{createdBy,jdbcType=DECIMAL},
+            </if>
+            <if test="creationDate != null" >
+                #{creationDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdatedBy != null" >
+                #{lastUpdatedBy,jdbcType=DECIMAL},
+            </if>
+            <if test="lastUpdateDate != null" >
+                #{lastUpdateDate,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>-->
+    
+    <delete id="delete" parameterType="java.lang.Integer">
+      DELETE FROM LOG WHERE LOG_ID = #{1}
+    </delete>
+
+<!--
+    <select id="findOneById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List" /> FROM USER WHERE USER_ID = #{1}
+    </select>
+
+    <select id="findOneByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List" /> FROM USER WHERE USER_NAME = #{1}
+    </select>
+-->
+
+    <select id="queryLogs" parameterType="java.util.Map" resultMap="BaseResultMapVo">
+        SELECT <include refid="Base_Column_List" /> FROM USER U, LOG L
+        <if test="_parameter != null">
+          <where>
+              <trim prefix="(" prefixOverrides="or" suffix=")">
+                  <if test="userName != null">
+                      <if test="userName != ''">
+                        or UPPER(U.USER_NAME) LIKE CONCAT(CONCAT('%', UPPER(#{userName,jdbcType=VARCHAR})),'%')
+                      </if>
+                  </if>
+                  <if test="userSex != null">
+                      <if test="userSex != ''">
+                          or UPPER(U.USER_SEX) LIKE CONCAT(CONCAT('%', UPPER(#{userSex,jdbcType=CHAR})),'%')
+                      </if>
+                  </if>
+                  <if test="userMail != null">
+                      <if test="userMail != ''">
+                          or UPPER(U.USER_MAIL) LIKE CONCAT(CONCAT('%', UPPER(#{userMail,jdbcType=VARCHAR})),'%')
+                      </if>
+                  </if>
+              </trim>
+              AND L.USER_ID = U.USER_ID
+          </where>
+        </if>
+        ORDER BY L.OPERATION_TIME DESC
+    </select>
+    
+</mapper>

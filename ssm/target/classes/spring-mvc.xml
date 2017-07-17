@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <beans xmlns="http://www.springframework.org/schema/beans"  
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
     xmlns:context="http://www.springframework.org/schema/context"  
     xmlns:mvc="http://www.springframework.org/schema/mvc"  
     xsi:schemaLocation="http://www.springframework.org/schema/beans    
@@ -16,6 +17,22 @@
     <context:component-scan base-package="com.hand.controller" />
 
     <mvc:resources location="/WEB-INF/"  mapping="/**" />
+
+   <!-- <mvc:interceptors>
+        &lt;!&ndash; 日志拦截器 &ndash;&gt;
+        <mvc:interceptor>
+            &lt;!&ndash; 拦截器路径配置 &ndash;&gt;
+            <mvc:mapping path="/users/*" />
+
+            &lt;!&ndash; 拦截器不需要拦截的路径 &ndash;&gt;
+            <mvc:exclude-mapping path="/jsp/**" />
+            <mvc:exclude-mapping path="/js/**" />
+            <mvc:exclude-mapping path="/css/**" />
+            <mvc:exclude-mapping path="/images/**" />
+
+            <bean class="com.hand.util.LoginInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>-->
 
     <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
     <bean id="mappingJacksonHttpMessageConverter"  
@@ -40,6 +57,22 @@
         <!-- 将返回视图信息拼接成可用的url -->
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
+    </bean>
+
+    <bean id="loginInterceptor" class="com.hand.util.LoginInterceptor" />
+    <bean id="autoPorxyFactoryBean" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="interceptorNames">
+            <list>
+                <value>loginInterceptor</value>
+            </list>
+        </property>
+        <property name="beanNames">
+            <list>
+                <value>
+                    *Controller
+                </value>
+            </list>
+        </property>
     </bean>
 
 </beans>  
