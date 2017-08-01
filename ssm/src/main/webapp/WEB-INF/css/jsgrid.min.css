@@ -33,7 +33,8 @@
 .jsgrid-grid-body {
     overflow-x: auto;
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch
+    -webkit-overflow-scrolling: touch;
+    max-height: 300px;
 }
 
 .jsgrid-table {
@@ -104,4 +105,16 @@
 
 .jsgrid-pager-page {
     padding: .2em .6em
+}
+
+.jsgrid-cell-params {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: normal !important;
+    height: auto;
+    vertical-align: text-top;
+    padding-top: 2px;
+    padding-bottom: 3px;
 }

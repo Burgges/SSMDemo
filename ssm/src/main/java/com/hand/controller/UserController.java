@@ -1,11 +1,14 @@
 package com.hand.controller;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.hand.annotation.OperationLog;
 import com.hand.dto.JsGridResult;
+import com.hand.dto.LoginDto;
 import com.hand.dto.MessageDto;
-import com.hand.dto.UserDto;
 import com.hand.model.User;
 import com.hand.service.UserService;
+import com.hand.util.AccessUtil;
+import com.hand.util.MessageUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,26 +35,35 @@ public class UserController {
     @Resource
     private UserService userService;
 
-
     @Resource
     private DefaultKaptcha captchaProducer;
+
+    private AccessUtil accessUtil = new AccessUtil();
+
+    private MessageUtil<User> messageUtil = new MessageUtil<>();
 
     /**
      * Add user
      * @param user new user
      * @return return info
      */
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    @OperationLog("Add user")
+    @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     @ResponseBody
-    public int save(User user) {
-        logger.info("insert: /users");
-        int result = 0;
-        user = userService.save(user);
-        if(user.getUserId() == null){
-            result = -1;
+    public MessageDto<User> save(User user,
+                    HttpServletRequest request) throws Exception {
+        MessageDto<User> messageDto;
+        Boolean flag = accessUtil.isAccessFlag(request);
+        if (!flag) {
+            return messageUtil.setMessageDto(500,"No access", user);
         }
-
-        return result;
+        logger.info("insert: /users");
+        HttpSession session = request.getSession();
+        Integer UID = (Integer)(session.getAttribute("UID") == null ? 0: session.getAttribute("UID"));
+        user.setCreatedBy(UID);
+        user.setLastUpdatedBy(UID);
+        messageDto = userService.save(user);
+        return messageDto;
     }
 
     /**
@@ -61,12 +73,13 @@ public class UserController {
      * @return return info
      * @throws Exception error
      */
-    @RequestMapping(value = "/users/{userId}", method = RequestMethod.POST)
+    @OperationLog("Update user")
+    @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.POST)
     @ResponseBody
-    public int update(@PathVariable Integer userId,
-                      @RequestParam Map<String, Object> params) throws Exception {
+    public MessageDto<User> update(@PathVariable Integer userId,
+                      @RequestParam Map<String, Object> params,
+                        HttpServletRequest request) throws Exception {
         logger.info("update: /users/{userId}");
-        int result = -1;
         String userName = params.get("userName") == null ? "":params.get("userName").toString();
         String userSex = params.get("userSex") == null ? "":params.get("userSex").toString();
         String userMail = params.get("userMail") == null ? "":params.get("userMail").toString();
@@ -74,11 +87,10 @@ public class UserController {
         user.setUserMail(userMail);
         user.setUserName(userName);
         user.setUserSex(userSex);
-        userService.update(user, userId);
-        if(user.getUserId() == null){
-            result = 0;
-        }
-        return result;
+        HttpSession session = request.getSession();
+        Integer UID = (Integer)(session.getAttribute("UID") == null ? 0: session.getAttribute("UID"));
+        user.setLastUpdatedBy(UID);
+        return userService.update(user, userId);
     }
 
     /**
@@ -86,9 +98,10 @@ public class UserController {
      * @param userId primary key
      * @return return info
      */
-    @RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE)
+    @OperationLog("Delete user")
+    @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public int delete(@PathVariable Integer userId) {
+    public int delete(@PathVariable Integer userId) throws Exception  {
         logger.info("delete: /users/{userId}");
         userService.delete(userId);
         return 1;
@@ -100,7 +113,8 @@ public class UserController {
      * @return return info
      * @throws Exception error
      */
-    @RequestMapping(value = "/users/{userName}", method = RequestMethod.GET)
+    @OperationLog("Select user by user name")
+    @RequestMapping(value = "/api/users/{userName}", method = RequestMethod.GET)
     @ResponseBody
     public User findOneByName(@PathVariable String userName) throws Exception {
         logger.info("findOneByName: /users/{userName}");
@@ -113,13 +127,11 @@ public class UserController {
      * @return return info
      * @throws Exception error
      */
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @OperationLog("Query all users")
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     @ResponseBody
-    public List<User> queryList(@RequestParam Map<String, Object> params,
-                                HttpServletRequest request) throws Exception {
+    public List<User> queryList(@RequestParam Map<String, Object> params) throws Exception {
         logger.info("queryList: /users");
-        logger.info("login user:"+ request.getSession().getAttribute("userName"));
-
         List<User> userList = userService.findList(params);
         JsGridResult<User> jsGridResult = new JsGridResult<>();
         jsGridResult.setData(userList);
@@ -131,8 +143,8 @@ public class UserController {
      * Into user index page
      * @return return info
      */
-    @RequestMapping(value = "/users/index", method = RequestMethod.GET)
-    public String toUserIndex() {
+    @RequestMapping(value = "/api/users/index", method = RequestMethod.GET)
+    public String toUserIndex() throws Exception  {
         logger.info("toUserIndex: /users/index");
         return "userIndex";
     }
@@ -142,7 +154,7 @@ public class UserController {
      * @return return info
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String toLogin() {
+    public String toLogin() throws Exception {
         logger.info("toLogin: /login");
         return "login";
     }
@@ -152,7 +164,7 @@ public class UserController {
      */
     @RequestMapping(value = "/getCaptcha", method = RequestMethod.GET)
     public void createCaptcha(HttpServletRequest request,
-                              HttpServletResponse response) {
+                              HttpServletResponse response) throws Exception {
         response.setDateHeader("Expires", 0);
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.addHeader("Cache-Control", "post-check=0, pre-check=0");
@@ -184,15 +196,16 @@ public class UserController {
     /**
      * user login
      * @param request request
-     * @param userDto login user
+     * @param loginDto login user
      * @return return info
      * @throws Exception error
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public MessageDto login(HttpServletRequest request, UserDto userDto) throws Exception {
-        MessageDto messageDto = new MessageDto();
-        String result = userService.login(userDto, request);
+    public MessageDto<User> login(HttpServletRequest request,
+                                  LoginDto loginDto) throws Exception {
+        MessageDto<User> messageDto = new MessageDto<>();
+        String result = userService.login(loginDto, request);
         Integer code = 500;
         if ("login success".equals(result)) {
             result = "userIndex";
@@ -209,7 +222,8 @@ public class UserController {
      * @return result
      * @throws Exception error
      */
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @OperationLog("User log out")
+    @RequestMapping(value = "/api/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         if(session.getAttribute("userName") == null || "".equals(session.getAttribute("userName"))){
@@ -221,32 +235,13 @@ public class UserController {
     }
 
     /**
-     * Into add user page
-     * @return return info
-     */
-    @RequestMapping(value = "/addPage", method = RequestMethod.GET)
-    public String toUserAdd() {
-        logger.info("toUserAdd: /addPage");
-        return "userAdd";
-    }
-
-    /**
-     * Into update user page
-     * @return return info
-     */
-    @RequestMapping(value = "/updatePage", method = RequestMethod.GET)
-    public String toUserUpdate() {
-        logger.info("toUserUpdate: /updatePage");
-        return "userUpdate";
-    }
-
-    /**
      * Select user by user id
      * @param userId search condition of user id
      * @return return info
      * @throws Exception error
      */
-    @RequestMapping(value = "/{userId}/users", method = RequestMethod.GET)
+    @OperationLog("Select user by user id")
+    @RequestMapping(value = "/api/{userId}/users", method = RequestMethod.GET)
     @ResponseBody
     public User findOneById(@PathVariable Integer userId) throws Exception {
         logger.info("findOneById: /{userId}/users");

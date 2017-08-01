@@ -33,9 +33,19 @@
     </filter>
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
-        <url-pattern>/users/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
+
+    <!-- log filter -->
+   <!-- <filter>
+        <filter-name>set log4j MDC for log2userId</filter-name>
+        <filter-class>com.hand.util.LogFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>set log4j MDC for log2userId</filter-name>
+        <url-pattern>/users/*</url-pattern>
+    </filter-mapping>-->
 
     <!-- Spring监听器-->
     <listener>
@@ -46,6 +56,11 @@
     <listener>
         <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
     </listener>
+
+    <!-- session timeout config -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
     <!-- Spring MVC servlet -->
     <servlet>

@@ -1358,8 +1358,8 @@ body {
 }
 
 button, input, select, textarea {
-    font-family: inherit;
-    font-size: inherit;
+    font-family: "Microsoft Yahei";
+    font-size: 12px;
     line-height: inherit
 }
 
@@ -3382,7 +3382,7 @@ select[multiple].input-lg, textarea.input-lg {
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     line-height: 1.42857143;
     text-align: center;

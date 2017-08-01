@@ -1,6 +1,7 @@
 package com.hand.dao;
 
 import com.hand.dto.LogDto;
+import com.hand.model.Log;
 
 import java.util.List;
 import java.util.Map;
@@ -23,4 +24,10 @@ public interface LogMapper {
      * @param logId condition
      */
     void delete(Integer logId);
+
+    /**
+     * save log to database
+     * @param log operation log
+     */
+    void save(Log log);
 }

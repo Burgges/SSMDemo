@@ -1,5 +1,6 @@
 package com.hand.service.impl;
 
+import com.hand.dto.MessageDto;
 import com.hand.model.User;
 import com.hand.service.UserService;
 import org.apache.log4j.Logger;
@@ -39,9 +40,9 @@ public class UserServiceImplTest {
         user.setPassword("123456");
         user.setUserSex("f");
         user.setUserMail("test@hand-china.com");
-        user = userService.save(user);
-        Assert.assertNotNull(user.getUserId());
-        userId = user.getUserId();
+        MessageDto<User> messageDto = userService.save(user);
+        Assert.assertNotNull(messageDto.getT().getUserId());
+        userId = messageDto.getT().getUserId();
         logger.info("aSave: " + userId);
     }
 

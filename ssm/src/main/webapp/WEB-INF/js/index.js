@@ -2,15 +2,28 @@
  * Created by huiyu.chen on 2017/7/6.
  *
  */
+
+var visible = [
+    {name:"W", id:"W"},
+    {name:"M", id:"M"}
+];
+
+var enabledFlag = [
+    {name:"Y", id: true},
+    {name:"N", id: false}
+];
+
+var roles = [];
+
 $(function(){
-    // loadUserList();
+    getRoleList();
     initJsgridList();
     $("#userList").jsGrid({
         controller:{
             loadData: function(filter) {
                 return $.ajax({
                     type: "GET",
-                    url: "users",
+                    url: "api/users",
                     data: filter,
                     dataType: "json"
                 });
@@ -20,10 +33,15 @@ $(function(){
                 var d = $.Deferred();
                 return $.ajax({
                     type: "POST",
-                    url: "users",
+                    url: "api/users",
                     data: item,
                     dataType: "json"
                 }).done(function(response) {
+                    if(500 == response.code){
+                        alert("Insert failure,"+response.message);
+                    }else{
+                        alert(response.message);
+                    }
                     d.resolve(response);
                     grid.loadData();
                 }).fail(function() {
@@ -37,12 +55,17 @@ $(function(){
                 item._method = "PUT";
                 return $.ajax({
                     type: "POST",
-                    url: "users/" + item.userId,
+                    url: "api/users/" + item.userId,
                     data: item,
                     dataType: "json"
                 }).done(function(response) {
                     console.log(response);
                     d.resolve(response);
+                    if(500 == response.code){
+                        alert("Update failure,"+response.message);
+                    }else{
+                        alert(response.message);
+                    }
                     grid.loadData();
                 }).fail(function() {
                     grid.loadData();
@@ -55,7 +78,7 @@ $(function(){
                 item._method = "DELETE";
                 return $.ajax({
                     type: "DELETE",
-                    url: "users/" + item.userId,
+                    url: "api/users/" + item.userId,
                     data: item,
                     dataType: "json"
                 }).done(function(response) {
@@ -97,7 +120,7 @@ $(function(){
 
         pagerContainer: null,
         pageIndex: 1,
-        pageSize: 5,
+        pageSize: 10,
         pageButtonCount: 15,
         pagerFormat: "Pages: {first} {prev} {pages} {next} {last}    {pageIndex} of {pageCount}",
         pagePrevText: "Prev",
@@ -109,97 +132,32 @@ $(function(){
 
         fields: [
             { name: "userId", css: "hide"},
-            { name: "userName", title: "User Name",  type: "text", validate: "required", valueField: "abbreviation" },
+            { name: "userName", title: "User Name",  type: "text", validate: "required", valueField: "abbreviation", width:70 },
             { name: "password", title: "Password", css: "hide", type: "text",  value: 123456 },
-            { name: "userSex", title:"Sex", type:"select",items:visible, validate:"required", valueField:"name",textField:"name", width: 40},
+            { name: "userSex", title:"Sex", type:"select",items:visible, validate:"required", valueField:"name",textField:"name", width: 35},
             { name: "userMail", title: "Mail", type: "text"},
-            { name: "creationDate", title: "Created On", type: "text", editing: false, inserting: false},
-            { name: "lastUpdateDate", title: "Last Updated On", type: "text", editing: false, inserting: false},
+            { name: "roleId", title:"User Role", type:"select",items:roles, valueField:"id",textField:"name", width: 60},
+            { name: "enabledFlag", title:"Enabled", type:"select", items:enabledFlag, validate:"required", valueField:"id",textField:"name", width: 50},
+            { name: "creationDate", title: "Created On", type: "text", editing: false, inserting: false, width:70},
+            { name: "lastUpdateDate", title: "Last Updated On", type: "text", editing: false, inserting: false, width:80},
             { type: "control",  editButton: true,  deleteButton: true, width:50 }
         ]
     });
 
 });
 
-var visible = [
-    {name:"W", id:"W"},
-    {name:"M", id:"M"}
-];
-
-/**
- * delete user by userId
- * @param userId
- */
-function deleteUser(userId) {
-    var isFlag = window.confirm("Are you sure delete this user?");
-    if(isFlag) {
-        $.ajax({
-            type: "DELETE",
-            url : "users/"+userId,
-            async : true,
-            cache : false,
-            success : function () {
-                loadUserList();
-                console.log("delete success");
-            }
-        });
-    }
-}
-
-/**
- * 读取所有user
- */
-function loadUserList(){
-    $.ajax({
-        type: "GET",
-        url : "users",
-        async : true,
-        cache : false,
-        success : function(response){
-            $("#tab-list").text("");
-            console.log(response);
-            var userList = response.userList;
-            if(userList != null && userList.length > 0) {
-                var tab_tr = '<tr style="height:50px;" id="tab-head">'
-                    +'<th>No.</th>'
-                    +'<th>NAME</th>'
-                    +'<th>SEX</th>'
-                    +'<th>MAIL</th>'
-                    +'<th style="width: 120px; text-align: center;">Function</th>'
-                    +'</tr>';
-                for(var i = 0; i < userList.length; i++){
-                    tab_tr += '<tr style="height:36px;" class = "tab-tr">'
-                        +'<td>'+ userList[i].userId +'</td>'
-                        +'<td>'+ userList[i].userName +'</td>'
-                        +'<td>'+ userList[i].userSex +'</td>'
-                        +'<td>'+ userList[i].userMail +'</td>'
-                        +'<td><button onclick=updateUser('+ userList[i].userId +')>Edit</button>'
-                        +'<button onclick=deleteUser('+ userList[i].userId +')>Delete</button></td>'
-                        +'</tr>';
-                }
-                $("#tab-list").append(tab_tr);
-            }
-        }
-    });
-}
-
-/*$("#btn-add").on("click", function(){
-});*/
-
-function addFun(){
-    window.location.href = "addPage";
-}
-
-function updateUser(userId) {
-    window.location.href = "updatePage?userId="+userId;
-}
-
 $(document).ready(function() {
     $("#searchBtn").click(function() {
         initJsgridList();
     });
+    $("#clearBtn").click(function() {
+        $("#searchContent").val("");
+    });
 });
 
+/**
+ * 初始化用户列表
+ */
 function initJsgridList() {
     var searchContent = $("#searchContent").val();
     var params = {
@@ -208,4 +166,34 @@ function initJsgridList() {
         "userMail" : searchContent
     };
     $("#userList").jsGrid("loadData", params);
+}
+
+/**
+ * Select user role list
+ */
+function getRoleList () {
+    $.ajax({
+        type : "GET",
+        url : "api/roles",
+        data : {},
+        async : false,
+        cache : false,
+        success : function (response) {
+            console.log(response);
+            if (response != null) {
+                for (var i = 0; i < response.length; i++) {
+                    roles.push(new dataToJson(response[i]));
+                }
+            }
+        }
+    });
+}
+
+/**
+ * role data format
+ * @param data
+ */
+function dataToJson(data) {
+    this.id = data.roleId;
+    this.name = data.roleName;
 }

@@ -14,6 +14,7 @@ public class BaseModel {
     private Date creationDate; //创建日期
     private Date lastUpdateDate;//最后更新时间
     private Integer lastUpdatedBy;//最后更新人Id
+    private Boolean enabledFlag; //是否失效
 
     public Integer getCreatedBy() {
         return createdBy;
@@ -47,5 +48,13 @@ public class BaseModel {
 
     public void setLastUpdatedBy(Integer lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Boolean getEnabledFlag() {
+        return enabledFlag;
+    }
+
+    public void setEnabledFlag(Boolean enabledFlag) {
+        this.enabledFlag = enabledFlag;
     }
 }

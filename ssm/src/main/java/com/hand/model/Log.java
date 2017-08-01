@@ -19,18 +19,21 @@ public class Log implements Serializable {
     @GeneratedValue
     private Integer logId;
 
-    @NotNull
     private Integer userId;
 
     @NotNull
-    private String functionApi;
+    private String fun;
 
     private String logDescription;
 
-    private String userIp;
-
     @NotNull
-    private Date operationTime;
+    private Date operationTime;   //操作时间
+
+    private String params; //方法参数
+
+    private String ipAddress; //访问ip
+
+    private Long operationTimes; //操作时长
 
     public Integer getLogId() {
         return logId;
@@ -48,12 +51,12 @@ public class Log implements Serializable {
         this.userId = userId;
     }
 
-    public String getFunctionApi() {
-        return functionApi;
+    public String getFun() {
+        return fun;
     }
 
-    public void setFunctionApi(String functionApi) {
-        this.functionApi = functionApi;
+    public void setFun(String fun) {
+        this.fun = fun;
     }
 
     public String getLogDescription() {
@@ -64,14 +67,6 @@ public class Log implements Serializable {
         this.logDescription = logDescription;
     }
 
-    public String getUserIp() {
-        return userIp;
-    }
-
-    public void setUserIp(String userIp) {
-        this.userIp = userIp;
-    }
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date getOperationTime() {
         return operationTime;
@@ -79,5 +74,29 @@ public class Log implements Serializable {
 
     public void setOperationTime(Date operationTime) {
         this.operationTime = operationTime;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public Long getOperationTimes() {
+        return operationTimes;
+    }
+
+    public void setOperationTimes(Long operationTimes) {
+        this.operationTimes = operationTimes;
     }
 }

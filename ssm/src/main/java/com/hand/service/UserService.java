@@ -1,5 +1,7 @@
 package com.hand.service;
 
+import com.hand.dto.LoginDto;
+import com.hand.dto.MessageDto;
 import com.hand.dto.UserDto;
 import com.hand.model.User;
 
@@ -18,20 +20,20 @@ public interface UserService {
      * @param user create object
      * @return return info
      */
-    User save(User user);
+    MessageDto<User> save(User user) throws Exception ;
 
     /**
      * delete user by userId
      * @param userId user id
      */
-    void delete(Integer userId);
+    MessageDto<User> delete(Integer userId);
 
     /**
      * update user by userId
      * @param user new user
      * @param userId user Id
      */
-    void update(User user, Integer userId) throws Exception;
+    MessageDto<User> update(User user, Integer userId) throws Exception;
 
     /**
      * select user by userId
@@ -54,5 +56,5 @@ public interface UserService {
      */
     List<User> findList(Map<String, Object> map);
 
-    String login(UserDto userDto, HttpServletRequest request) throws Exception;
+    String login(LoginDto loginDto, HttpServletRequest request) throws Exception;
 }

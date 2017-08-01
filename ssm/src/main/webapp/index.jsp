@@ -9,9 +9,15 @@
 <html>
 <head>
     <title>SSM java web application index</title>
+    <script>
+        window.onload = function(){
+            window.location.href = "login";
+        }
+    </script>
 </head>
 <body>
-<b>Hello world!</b>
-<a href="users/index" >User List</a>
+<div style="margin: 50px auto; text-align: center; font-size: 22px;">
+    <b>Hello world!</b>
+</div>
 </body>
 </html>

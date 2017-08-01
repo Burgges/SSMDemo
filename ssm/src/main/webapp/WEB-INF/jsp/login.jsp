@@ -6,9 +6,17 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"
+            +request.getServerName()+":"+request.getServerPort()
+            +path+"/";
+%>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge" >
+    <BASE href="<%=basePath%>">
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/login.js"></script>
     <link href="css/login.css" rel="stylesheet" type="text/css" />

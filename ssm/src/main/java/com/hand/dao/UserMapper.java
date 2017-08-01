@@ -1,5 +1,6 @@
 package com.hand.dao;
 
+import com.hand.dto.UserDto;
 import com.hand.model.User;
 
 import java.util.List;

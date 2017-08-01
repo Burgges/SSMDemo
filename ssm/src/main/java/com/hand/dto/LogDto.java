@@ -1,5 +1,7 @@
 package com.hand.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -13,15 +15,19 @@ public class LogDto {
 
     private Integer userId;
 
-    private String functionApi;
+    private String userName;
+
+    private String fun;
 
     private String logDescription;
 
-    private String userIp;
-
     private Date operationTime;
 
-    private String userName;
+    private String params;
+
+    private String ipAddress; //访问ip
+
+    private Long operationTimes; //操作时长
 
     public Integer getLogId() {
         return logId;
@@ -39,12 +45,20 @@ public class LogDto {
         this.userId = userId;
     }
 
-    public String getFunctionApi() {
-        return functionApi;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFunctionApi(String functionApi) {
-        this.functionApi = functionApi;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getFun() {
+        return fun;
+    }
+
+    public void setFun(String fun) {
+        this.fun = fun;
     }
 
     public String getLogDescription() {
@@ -55,14 +69,7 @@ public class LogDto {
         this.logDescription = logDescription;
     }
 
-    public String getUserIp() {
-        return userIp;
-    }
-
-    public void setUserIp(String userIp) {
-        this.userIp = userIp;
-    }
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date getOperationTime() {
         return operationTime;
     }
@@ -71,11 +78,27 @@ public class LogDto {
         this.operationTime = operationTime;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getParams() {
+        return params;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setParams(String params) {
+        this.params = params;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public Long getOperationTimes() {
+        return operationTimes;
+    }
+
+    public void setOperationTimes(Long operationTimes) {
+        this.operationTimes = operationTimes;
     }
 }

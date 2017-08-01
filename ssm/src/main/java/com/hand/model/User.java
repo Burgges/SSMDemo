@@ -1,5 +1,6 @@
 package com.hand.model;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ public class User extends BaseModel implements Serializable{
     private Integer userId;
     //用户名
     @NotNull
+    @Column(unique = true)
     private String userName;
     //密码
     @NotNull
@@ -24,6 +26,8 @@ public class User extends BaseModel implements Serializable{
     private String userSex;
     //邮箱
     private String userMail;
+    //角色
+    private Integer roleId;
 
     public Integer getUserId() {
         return userId;
@@ -63,5 +67,13 @@ public class User extends BaseModel implements Serializable{
 
     public void setUserMail(String userMail) {
         this.userMail = userMail;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 }

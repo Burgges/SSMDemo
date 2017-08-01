@@ -4,10 +4,13 @@ package com.hand.dto;
  * Created by huiyu.chen on 2017/7/11.
  *
  */
-public class MessageDto {
+public class MessageDto<T> {
+
     private String message;
 
     private Integer code;
+
+    private T t;
 
     public String getMessage() {
         return message;
@@ -23,5 +26,13 @@ public class MessageDto {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public T getT() {
+        return t;
+    }
+
+    public void setT(T t) {
+        this.t = t;
     }
 }

@@ -25,7 +25,7 @@ public class LoginFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.info("Filter init");
+        logger.info("Login Filter init");
     }
 
     @Override
@@ -46,11 +46,10 @@ public class LoginFilter implements Filter {
             }
         }
         chain.doFilter(arg1, arg2);
-        return;
     }
 
     @Override
     public void destroy() {
-        logger.info("Filter destroy");
+        logger.info("Login Filter destroy");
     }
 }

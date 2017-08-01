@@ -37,6 +37,7 @@
     overflow-x: auto;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    max-height: 300px;
 }
 
 .jsgrid-table {
